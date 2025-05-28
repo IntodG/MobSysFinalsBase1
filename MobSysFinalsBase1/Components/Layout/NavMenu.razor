@@ -1,67 +1,130 @@
 ﻿@inject NavigationManager Nav
 @inject AppShellContext AppShell
+
 <style>
-    .userpane {
-        font-size: 24px;
-        color: green;
-        text-transform: capitalize;
+    .colorful-nav {
+        background: linear-gradient(135deg, #fccb90 0%, #d57eea 100%);
+        border-radius: 1.5rem;
+        box-shadow: 0 6px 24px 0 rgba(255, 184, 108, 0.16);
+        padding: 2rem 1.3rem 1.3rem 1.3rem;
+        min-width: 230px;
+        color: #fff;
+        font-size: 1.15rem;
+        font-weight: 500;
+        margin: 1.2rem 0 1.5rem 0;
     }
+
+        .colorful-nav .userpane {
+            font-size: 1.18rem;
+            color: #fffbe7;
+            background: linear-gradient(90deg, #ffb347 0%, #ff5e62 100%);
+            padding: 1.1rem 1.15rem;
+            border-radius: 1.1rem;
+            margin-bottom: 1.1rem;
+            box-shadow: 0 2px 10px 0 rgba(255, 136, 0, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            letter-spacing: 0.02em;
+        }
+
+            .colorful-nav .userpane i {
+                color: #fffbe7;
+                margin-right: 0.6rem;
+                font-size: 1.45rem;
+                filter: drop-shadow(0 2px 6px #ffb34766);
+            }
+
+        .colorful-nav ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 1.1rem;
+        }
+
+        .colorful-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .colorful-nav .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #fff !important;
+            padding: 0.8rem 1.1rem;
+            border-radius: 1rem;
+            background: transparent;
+            transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+            font-weight: 500;
+            font-size: 1.12rem;
+            letter-spacing: 0.01em;
+            box-shadow: none;
+        }
+
+            .colorful-nav .nav-link.active, .colorful-nav .nav-link:hover {
+                background: linear-gradient(90deg, #ffe29f 0%, #ffb347 100%);
+                color: #f76b1c !important;
+                font-weight: bold;
+                text-shadow: 0 1px 6px #ffe29f66;
+                box-shadow: 0 2px 10px 0 rgba(255, 184, 108, 0.09);
+                border-left: 4px solid #ff5e62;
+            }
+
+        .colorful-nav hr {
+            border: none;
+            border-top: 2px solid #ffe29f;
+            opacity: 0.82;
+            margin: 1.2rem 0;
+        }
+
+        .colorful-nav .btn-outline-danger {
+            border: 2px solid #fffbe7;
+            color: #f37335;
+            font-weight: bold;
+            border-radius: 0.9rem;
+            background: #fffbe7;
+            margin-left: 1.2rem;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 2px 10px 0 rgba(255, 110, 127, 0.09);
+        }
+
+            .colorful-nav .btn-outline-danger:hover {
+                background: #ff5e62;
+                color: #fffbe7;
+                border: 2px solid #ff5e62;
+            }
 </style>
-<nav class="mobile-nav" onclick="hideMenu()">
+
+<nav class="colorful-nav mobile-nav" onclick="hideMenu()">
     @if (AppShell.IsUserLoggedIn)
     {
-        if (AppShell.CurrentUser!=null)
+        if (AppShell.CurrentUser != null)
         {
             <div class="userpane">
-                <i class="fas fa-user"></i>&nbsp;
-                Hi @AppShell.CurrentUser.Username
-                <a class="btn btn-outline-danger" href="javascript:void(0)" style="float:right" @onclick="Logout">
+                <span>
+                    <i class="fas fa-user-circle"></i>
+                    Hi, <span style="text-transform:capitalize;">@AppShell.CurrentUser.Username</span>
+                </span>
+                <a class="btn btn-outline-danger" href="javascript:void(0)" @onclick="Logout" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
-
             </div>
         }
     }
     <ul>
         <li>
-            <a class="nav-link" href="">
-                <i class="fa fa-home"></i>&nbsp;Home
+            <a class="nav-link @(Nav.Uri.EndsWith("/") || Nav.Uri.EndsWith("/home") ? "active" : "")" href="/">
+                <i class="fa fa-home"></i> Home
             </a>
         </li>
-        @* <li>
-            <a class="nav-link" href="catalog">
-                <i class="fa fa-store"></i>&nbsp;Catalog
-            </a>
-        </li>
-        <li>
-            <a class="nav-link" href="mycart">
-                <i class="fa fa-shopping-cart"></i>&nbsp;My Cart
-            </a>
-        </li>
-        <li>
-            <a class="nav-link" href="myorders">
-                <i class="fa fa-truck"></i>&nbsp;My Orders
-            </a>
-        </li> *@
+        @* Add more links as needed *@
     </ul>
     <hr />
     @if (AppShell.IsUserLoggedIn)
     {
         <ul>
-            <!--Admin Pages Here-->
-            @* <li>
-                <a class="nav-link" href="products">
-                    <i class="fa fa-dolly-flatbed"></i>&nbsp;Products
-                </a>
-            </li>
             <li>
-                <a class="nav-link" href="orders">
-                    <i class="fa fa-cash-register"></i>&nbsp;Orders
-                </a>
-            </li> *@
-            <li>
-                <a class="nav-link" href="users">
-                    <i class="fa fa-users"></i>&nbsp;Users
+                <a class="nav-link @(Nav.Uri.Contains("/users") ? "active" : "")" href="users">
+                    <i class="fa fa-users"></i> Users
                 </a>
             </li>
         </ul>
@@ -70,28 +133,23 @@
     {
         <ul>
             <li>
-                <a class="nav-link" href="register">
-                    <i class="fa fa-list"></i>&nbsp;Register
+                <a class="nav-link @(Nav.Uri.Contains("/register") ? "active" : "")" href="register">
+                    <i class="fa fa-list"></i> Register
                 </a>
             </li>
             <li>
-                <a class="nav-link" href="login">
-                    <i class="fa fa-sign-in-alt"></i>&nbsp;Login
+                <a class="nav-link @(Nav.Uri.Contains("/login") ? "active" : "")" href="login">
+                    <i class="fa fa-sign-in-alt"></i> Login
                 </a>
             </li>
             <li>
-                <a class="nav-link" href="recipes">
-                    <i class="fa fa-sign-in-alt"></i>&nbsp;Recipes
+                <a class="nav-link @(Nav.Uri.Contains("/recipes") ? "active" : "")" href="recipes">
+                    <i class="fa fa-utensils"></i> Recipes
                 </a>
             </li>
-            <li>
-                <a class="nav-link" href="settings">
-                    <i class="fa fa-sign-in-alt"></i>&nbsp;Settings
-                </a>
-            </li>
+           
         </ul>
     }
-
 </nav>
 
 @code {

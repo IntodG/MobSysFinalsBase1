@@ -1,59 +1,69 @@
 ﻿@page "/"
+
 <SectionContent SectionName="page-buttons">
-    <div id="searchBox" class="input-group header-search" style="display:none;">
-        <span class="input-group-text text-warning"><i class="fa fa-search"></i></span>
-        <input id="txtSearch" type="text" class="form-control" placeholder="Search recipes, ingredients, and more..." value="@Model.Search" @onchange="SearchTerm" />
-        <span class="input-group-text" onclick="hideSearchBox()"><i class="fa fa-times"></i></span>
+    <div id="searchBox" class="input-group shadow-sm rounded-pill p-2" style="display:none; max-width: 600px; margin:auto;">
+        <span class="input-group-text bg-white border-0 text-warning"><i class="fa fa-search"></i></span>
+        <input id="txtSearch" type="text" class="form-control border-0" placeholder="Search recipes, ingredients, and more..." value="@Model.Search" @onchange="SearchTerm" />
+        <span class="input-group-text bg-white border-0" onclick="hideSearchBox()" style="cursor:pointer;"><i class="fa fa-times"></i></span>
     </div>
-    <span id="controlBox">
-        <button class="btn text-warning" onclick="showSearchBox()">
-            <i class="fa fa-search"></i>
+    <div id="controlBox" class="text-center mt-3">
+        <button class="btn btn-outline-warning rounded-pill px-4" onclick="showSearchBox()">
+            <i class="fa fa-search"></i> Search Recipes
         </button>
-    </span>
+    </div>
 </SectionContent>
 
 <section style="
-    min-height:70vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background: url('https://th.bing.com/th/id/OIP.8oh30P8nzkOjK-_4MDGpqQHaEJ?w=287&h=180&c=7&r=0&o=7&cb=iwp2&pid=1.7&rm=3') center center/cover no-repeat;
-    background-color: #ffe6b3;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('https://th.bing.com/th/id/OIP.8oh30P8nzkOjK-_4MDGpqQHaEJ?w=287&h=180&c=7&r=0&o=7&cb=iwp2&pid=1.7&rm=3') center center / cover no-repeat;
+    background-color: #fff3e0;
 ">
-    <div class="container text-center" style="background: rgba(255,255,255,0.82); border-radius: 2rem; padding: 2.5rem 1.5rem;">
-        <h1 class="fw-bold mb-3" style="color:#f37335; font-size:2.7rem;">
-            Welcome to <span style="color:#ff5e62;">Your Tasty Kitchen!</span>
+    <div class="container text-center" style="
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(6px);
+        border-radius: 2rem;
+        padding: 3rem 2rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+    ">
+        <h1 class="fw-bold mb-4" style="font-size: 2.8rem; color: #ff5e62;">
+            Welcome to <span style="color:#ffa751;">Your Tasty Kitchen</span>
         </h1>
-        <p class="lead mb-4" style="max-width:600px; margin:auto;">
-            Discover, cook, and share amazing recipes from around the world.<br />
-            <span style="color:#f7971e;">Search for dishes, convert ingredients, add your own recipes, and master new cooking skills—all in one beautiful app!</span>
+        <p class="lead mb-4 text-muted" style="max-width: 600px; margin: auto;">
+            Discover, cook, and share mouthwatering recipes from around the globe.<br />
+            <strong style="color:#f7971e;">Search. Convert. Create. Cook like a pro.</strong>
         </p>
+
         <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-4">
-            <a href="/recipes" class="btn btn-warning btn-lg px-5" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); border:none; color:white;">
-                <i class="fas fa-utensils"></i> Explore Recipes
+            <a href="/recipes" class="btn btn-lg text-white px-5" style="background: linear-gradient(90deg, #f857a6 0%, #ff5858 100%); border: none;">
+                <i class="fas fa-utensils me-2"></i> Explore Recipes
             </a>
-            <a href="/register" class="btn btn-outline-warning btn-lg px-5" style="color:#f37335; border-color:#f37335;">
-                <i class="fas fa-user-plus"></i> Join Free
+            <a href="/register" class="btn btn-outline-warning btn-lg px-5">
+                <i class="fas fa-user-plus me-2"></i> Join Free
             </a>
             <a href="/login" class="btn btn-outline-secondary btn-lg px-5">
-                <i class="fas fa-sign-in-alt"></i> Login
+                <i class="fas fa-sign-in-alt me-2"></i> Login
             </a>
         </div>
+
         <div class="mt-5">
-            <span class="badge" style="background:linear-gradient(90deg, #a1c4fd 0%, #3a7bd5 100%); color:white; font-size:1rem;">
-                <i class="fas fa-star"></i> 1000+ recipes • US/Metric conversion • Step-by-step guides
+            <span class="badge fs-6" style="background: linear-gradient(90deg, #43cea2, #185a9d); color: white;">
+                <i class="fas fa-star me-1"></i> 1000+ Recipes • US/Metric Conversion • Guided Cooking
             </span>
         </div>
     </div>
 </section>
 
 <script>
-    function showSearchBox(){
-        $('#searchBox').show();
-        $('#controlBox').hide();
+    function showSearchBox() {
+        document.getElementById('searchBox').style.display = 'flex';
+        document.getElementById('controlBox').style.display = 'none';
     }
-    function hideSearchBox(){
-        $('#searchBox').hide();
-        $('#controlBox').show();
+    function hideSearchBox() {
+        document.getElementById('searchBox').style.display = 'none';
+        document.getElementById('controlBox').style.display = 'block';
     }
 </script>

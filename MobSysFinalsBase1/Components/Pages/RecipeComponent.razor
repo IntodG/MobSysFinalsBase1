@@ -16,13 +16,15 @@
     private List<Ingredient> newIngredients = new() { new Ingredient() };
     private List<string> newSteps = new() { "" };
     private string addError = "";
+    private bool isIngredientsGrid = false; // for toggle between list/grid view
 
+    // FIX: Make AmountUS and AmountMetric nullable for safe number binding
     class Ingredient
     {
         public string Name { get; set; } = "";
-        public double AmountUS { get; set; }
+        public double? AmountUS { get; set; }   // must be nullable
         public string UnitUS { get; set; } = "";
-        public double AmountMetric { get; set; }
+        public double? AmountMetric { get; set; }   // must be nullable
         public string UnitMetric { get; set; } = "";
     }
 
@@ -36,6 +38,18 @@
         public List<string> Steps { get; set; } = new();
     }
 
+    @code {
+
+        // ... other code ...
+        // Remove this line:
+        // private List<Ingredient> newingredients = new() { new Ingredient() };
+
+        // Use this:
+       
+
+        // ... rest of your code, all references should be newIngredients ...
+
+    }
     private List<Recipe> Recipes = new()
     {
         new Recipe {
@@ -101,8 +115,70 @@
                 "Stir in curry powder, then pour in coconut milk.",
                 "Simmer until chicken is cooked and sauce thickens."
             }
+        },
+                new Recipe {
+            Title = "Laing (Spicy Taro Leaves in Coconut Milk)",
+            ImageUrl = "https://th.bing.com/th/id/OIP.gm-XzT94DXmuOSjFfntLZAHaGG?w=208&h=180&c=7&r=0&o=5&pid=1.7",
+            Description = "A classic Filipino dish made with dried taro leaves, coconut milk, and chilies—creamy, spicy, and aromatic.",
+            PrepTimeMinutes = 30,
+            Ingredients = new List<Ingredient>
+            {
+                new Ingredient { Name = "Dried Taro Leaves", AmountUS = 2, UnitUS = "cups", AmountMetric = 40, UnitMetric = "g" },
+                new Ingredient { Name = "Pork Belly (optional)", AmountUS = 0.5, UnitUS = "lb", AmountMetric = 225, UnitMetric = "g" },
+                new Ingredient { Name = "Onion", AmountUS = 1, UnitUS = "medium", AmountMetric = 1, UnitMetric = "medium" },
+                new Ingredient { Name = "Garlic", AmountUS = 3, UnitUS = "cloves", AmountMetric = 3, UnitMetric = "cloves" },
+                new Ingredient { Name = "Ginger", AmountUS = 1, UnitUS = "tbsp", AmountMetric = 10, UnitMetric = "g" },
+                new Ingredient { Name = "Red Chili Peppers", AmountUS = 2, UnitUS = "pieces", AmountMetric = 2, UnitMetric = "pieces" },
+                new Ingredient { Name = "Coconut Milk", AmountUS = 2, UnitUS = "cups", AmountMetric = 480, UnitMetric = "ml" },
+                new Ingredient { Name = "Coconut Cream", AmountUS = 1, UnitUS = "cup", AmountMetric = 240, UnitMetric = "ml" },
+                new Ingredient { Name = "Shrimp Paste (Bagoong)", AmountUS = 1, UnitUS = "tbsp", AmountMetric = 15, UnitMetric = "g" }
+            },
+            Steps = new List<string>
+            {
+                "Sauté onion, garlic, and ginger until fragrant.",
+                "Add pork belly and cook until lightly browned (skip if vegetarian).",
+                "Add shrimp paste and chili peppers, stir well.",
+                "Pour in coconut milk and bring to a gentle simmer.",
+                "Add dried taro leaves on top—do not stir. Let them absorb the coconut milk.",
+                "Simmer uncovered until leaves are soft and most liquid is absorbed (about 20 minutes).",
+                "Pour in coconut cream, simmer for 5 more minutes until creamy and flavorful.",
+                "Serve with steamed rice."
+            }
+        },
+                new Recipe {
+            Title = "Kare Kare (Filipino Peanut Stew)",
+            ImageUrl = "https://th.bing.com/th/id/OIP.7AUIinM72vg-aZ6FTrJxCQHaHQ?rs=1&pid=ImgDetMain",
+            Description = "A rich and savory Filipino stew made with oxtail, vegetables, and a creamy peanut sauce. Traditionally served with bagoong (shrimp paste) on the side.",
+            PrepTimeMinutes = 40,
+            Ingredients = new List<Ingredient>
+            {
+                new Ingredient { Name = "Oxtail", AmountUS = 2, UnitUS = "lb", AmountMetric = 900, UnitMetric = "g" },
+                new Ingredient { Name = "Tripe (optional)", AmountUS = 0.5, UnitUS = "lb", AmountMetric = 225, UnitMetric = "g" },
+                new Ingredient { Name = "Eggplant", AmountUS = 2, UnitUS = "medium", AmountMetric = 2, UnitMetric = "medium" },
+                new Ingredient { Name = "String Beans", AmountUS = 1, UnitUS = "bunch", AmountMetric = 200, UnitMetric = "g" },
+                new Ingredient { Name = "Banana Blossom", AmountUS = 1, UnitUS = "piece", AmountMetric = 1, UnitMetric = "piece" },
+                new Ingredient { Name = "Peanut Butter", AmountUS = 1, UnitUS = "cup", AmountMetric = 240, UnitMetric = "g" },
+                new Ingredient { Name = "Ground Toasted Rice", AmountUS = 3, UnitUS = "tbsp", AmountMetric = 24, UnitMetric = "g" },
+                new Ingredient { Name = "Garlic", AmountUS = 4, UnitUS = "cloves", AmountMetric = 4, UnitMetric = "cloves" },
+                new Ingredient { Name = "Onion", AmountUS = 1, UnitUS = "large", AmountMetric = 1, UnitMetric = "large" },
+                new Ingredient { Name = "Annatto Seeds (Atsuete)", AmountUS = 2, UnitUS = "tbsp", AmountMetric = 16, UnitMetric = "g" },
+                new Ingredient { Name = "Water", AmountUS = 6, UnitUS = "cups", AmountMetric = 1.5, UnitMetric = "liters" },
+                new Ingredient { Name = "Shrimp Paste (Bagoong)", AmountUS = 3, UnitUS = "tbsp", AmountMetric = 45, UnitMetric = "g" }
+            },
+            Steps = new List<string>
+            {
+                "Boil oxtail (and tripe, if using) in water until tender. Set aside and keep the broth.",
+                "Sauté garlic and onion in a large pot.",
+                "Add cooked oxtail and tripe to the pot.",
+                "Pour in the reserved broth. Add peanut butter and ground toasted rice. Stir until well combined.",
+                "Add annatto water (soaked and strained annatto seeds in warm water) for color.",
+                "Simmer and add vegetables: eggplant, string beans, and banana blossom. Cook until tender.",
+                "Season with salt and pepper. Serve hot with bagoong on the side and steamed rice."
+            }
         }
-    };
+
+            };
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -124,14 +200,14 @@
         SelectedRecipe = null;
     }
 
-    private string FormatAmount(double amount)
+    private string FormatAmount(double? amount)
     {
-        // For whole numbers, don't show .0
+        if (amount == null) return "";
         if (amount % 1 == 0)
         {
             return ((int)amount).ToString(CultureInfo.InvariantCulture);
         }
-        return amount.ToString(CultureInfo.InvariantCulture);
+        return amount.Value.ToString(CultureInfo.InvariantCulture);
     }
 
     // Add Recipe Functions
@@ -174,54 +250,99 @@
         isAdding = false;
     }
 
-    private void SaveRecipe()
-    {
-        addError = "";
-        if (string.IsNullOrWhiteSpace(newTitle) || string.IsNullOrWhiteSpace(newDescription) || string.IsNullOrWhiteSpace(newPrepTime))
+        private void SaveRecipe()
         {
-            addError = "Please fill in all required fields.";
-            return;
-        }
-        if (!int.TryParse(newPrepTime, out int prepTime) || prepTime < 0)
-        {
-            addError = "Prep time must be a valid positive number.";
-            return;
-        }
-        if (newIngredients.Any(i => string.IsNullOrWhiteSpace(i.Name) || string.IsNullOrWhiteSpace(i.UnitUS) || string.IsNullOrWhiteSpace(i.UnitMetric)))
-        {
-            addError = "Please fill in all ingredient fields.";
-            return;
-        }
-        if (newSteps.Any(s => string.IsNullOrWhiteSpace(s)))
-        {
-            addError = "Please fill in all steps.";
-            return;
-        }
+    addError = "";
 
-        Recipes.Add(new Recipe
-            {
-                Title = newTitle,
-                ImageUrl = string.IsNullOrWhiteSpace(newImageUrl)
-                    ? "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80"
-                    : newImageUrl,
-                Description = newDescription,
-                PrepTimeMinutes = prepTime,
-                Ingredients = newIngredients.Select(i => new Ingredient
-                {
-                    Name = i.Name,
-                    AmountUS = i.AmountUS,
-                    UnitUS = i.UnitUS,
-                    AmountMetric = i.AmountMetric,
-                    UnitMetric = i.UnitMetric
-                }).ToList(),
-                Steps = newSteps.ToList()
-            });
-        isAdding = false;
+    // Trim and validate input fields
+    string title = (newTitle ?? "").Trim();
+    string description = (newDescription ?? "").Trim();
+    string imageUrl = (newImageUrl ?? "").Trim();
+    string prepTimeStr = (newPrepTime ?? "").Trim();
+
+    if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(description) || string.IsNullOrWhiteSpace(prepTimeStr))
+    {
+        addError = "Please fill in all required fields (Title, Description, and Prep Time).";
+        return;
     }
 
+    if (!int.TryParse(prepTimeStr, out int prepTime) || prepTime < 0)
+    {
+        addError = "Prep time must be a valid positive number.";
+        return;
+    }
+
+    // Clean up ingredients
+    var cleanedIngredients = newIngredients
+        .Where(i => !string.IsNullOrWhiteSpace(i.Name)
+                 && i.AmountUS != null && !string.IsNullOrWhiteSpace(i.UnitUS)
+                 && i.AmountMetric != null && !string.IsNullOrWhiteSpace(i.UnitMetric))
+        .Select(i => new Ingredient
+                {
+                    Name = i.Name.Trim(),
+                    AmountUS = i.AmountUS,
+                    UnitUS = i.UnitUS.Trim(),
+                    AmountMetric = i.AmountMetric,
+                    UnitMetric = i.UnitMetric.Trim()
+                })
+        .ToList();
+
+    if (cleanedIngredients.Count == 0)
+    {
+        addError = "Please add at least one complete ingredient (Name, US/Metric amount and unit).";
+        return;
+    }
+
+    // Clean up steps
+    var cleanedSteps = newSteps
+        .Select(s => s.Trim())
+        .Where(s => !string.IsNullOrWhiteSpace(s))
+        .ToList();
+
+    if (cleanedSteps.Count == 0)
+    {
+        addError = "Please add at least one instruction step.";
+        return;
+    }
+
+    // Use default image if empty
+    if (string.IsNullOrWhiteSpace(imageUrl))
+    {
+        imageUrl = "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80";
+    }
+
+    var newRecipe = new Recipe
+            {
+                Title = title,
+                ImageUrl = imageUrl,
+                Description = description,
+                PrepTimeMinutes = prepTime,
+                Ingredients = cleanedIngredients,
+                Steps = cleanedSteps
+            };
+
+    Recipes.Add(newRecipe);
+
+    // Reset form
+    isAdding = false;
+    newTitle = "";
+    newImageUrl = "";
+    newDescription = "";
+    newPrepTime = "";
+    newIngredients = new() { new Ingredient() };
+    newSteps = new() { "" };
+    addError = "";
+        }
     // Function to switch to table view
     private void ShowTableView() { isTable = true; isGrid = false; }
     private void ShowGridView() { isGrid = true; isTable = false; }
+
+    // Toggle between list/table and grid for ingredients in detail view
+    private void ToggleIngredientsView()
+    {
+        isIngredientsGrid = !isIngredientsGrid;
+    }
+
 
     // Function to render recipes as a table
     private RenderFragment RenderRecipeTable() => builder =>
@@ -254,7 +375,7 @@
             builder.AddAttribute(seq++, "style", "width:80px; height:60px; object-fit:cover; border-radius:0.5rem;");
             builder.CloseElement(); // img
             builder.CloseElement(); // td
-            // Title
+                                    // Title
             builder.OpenElement(seq++, "td");
             builder.AddContent(seq++, recipe.Title);
             builder.CloseElement();
@@ -279,7 +400,7 @@
             }
             builder.CloseElement(); // ul
             builder.CloseElement(); // td
-            // View
+                                    // View
             builder.OpenElement(seq++, "td");
             builder.OpenElement(seq++, "button");
             builder.AddAttribute(seq++, "class", "btn btn-sm btn-warning");
@@ -320,78 +441,77 @@
 
         @if (isAdding)
         {
-            <div class="card shadow-lg border-0 mb-4" style="max-width: 700px; margin: 0 auto; background: rgba(255,255,255,0.97); border-radius: 1.5rem;">
-                <div class="card-body">
-                    <h4 class="fw-bold mb-3" style="color:#f37335"><i class="fas fa-plus-circle"></i> Add New Recipe</h4>
-                    @if (!string.IsNullOrEmpty(addError))
+            <div class="add-recipe-card">
+                <h4 class="add-recipe-title"><i class="fas fa-plus-circle"></i> Add New Recipe</h4>
+                @if (!string.IsNullOrEmpty(addError))
+                {
+                    <div class="alert alert-danger">@addError</div>
+                }
+                <div class="mb-3">
+                    <label class="add-recipe-label form-label">Title *</label>
+                    <input class="form-control" @bind="newTitle" maxlength="50" />
+                </div>
+                <div class="mb-3">
+                    <label class="add-recipe-label form-label">Image URL</label>
+                    <input class="form-control" @bind="newImageUrl" />
+                </div>
+                <div class="mb-3">
+                    <label class="add-recipe-label form-label">Description *</label>
+                    <textarea class="form-control" @bind="newDescription" maxlength="200"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="add-recipe-label form-label">Prep Time (minutes) *</label>
+                    <input class="form-control" @bind="newPrepTime" type="number" min="1" />
+                </div>
+                <div class="mb-3">
+                    <label class="add-recipe-label form-label">Ingredients</label>
+                    @for (var i = 0; i < newIngredients.Count; i++)
                     {
-                        <div class="alert alert-danger">@addError</div>
+                        <div class="add-recipe-ing-row">
+                            <input class="form-control" type="number" min="0.01" step="any" style="width: 70px"
+                                   placeholder="US Amt" @bind-value="newIngredients[i].AmountUS" @bind-value:event="oninput" />
+                            <input class="form-control" style="width: 80px"
+                                   placeholder="US Unit" @bind="newIngredients[i].UnitUS" />
+                            <input class="form-control" type="number" min="0.01" step="any" style="width: 70px"
+                                   placeholder="Metric Amt" @bind-value="newIngredients[i].AmountMetric" @bind-value:event="oninput" />
+                            <input class="form-control" style="width: 80px"
+                                   placeholder="Metric Unit" @bind="newIngredients[i].UnitMetric" />
+                            <input class="form-control flex-fill"
+                                   placeholder="Ingredient Name" @bind="newIngredients[i].Name" />
+                            @if (newIngredients.Count > 1)
+                            {
+                                <button class="btn btn-sm btn-outline-danger" type="button" title="Remove" @onclick="() => RemoveIngredient(i)">
+                                    <i class="fas fa-minus-circle"></i>
+                                </button>
+                            }
+                        </div>
                     }
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold" style="color:#f37335">Title *</label>
-                        <input class="form-control" @bind="newTitle" maxlength="50" />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold" style="color:#f37335">Image URL</label>
-                        <input class="form-control" @bind="newImageUrl" />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold" style="color:#f37335">Description *</label>
-                        <textarea class="form-control" @bind="newDescription" maxlength="200"></textarea>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold" style="color:#f37335">Prep Time (minutes) *</label>
-                        <input class="form-control" @bind="newPrepTime" type="number" min="0" />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold" style="color:#f37335">Ingredients *</label>
-                        @for (var i = 0; i < newIngredients.Count; i++)
-                        {
-                            <div class="row g-1 mb-2 align-items-end">
-                                <div class="col-2">
-                                    <input class="form-control" type="number" placeholder="US Amt" @bind="newIngredients[i].AmountUS" />
-                                </div>
-                                <div class="col-2">
-                                    <input class="form-control" placeholder="US Unit" @bind="newIngredients[i].UnitUS" />
-                                </div>
-                                <div class="col-2">
-                                    <input class="form-control" type="number" placeholder="Metric Amt" @bind="newIngredients[i].AmountMetric" />
-                                </div>
-                                <div class="col-2">
-                                    <input class="form-control" placeholder="Metric Unit" @bind="newIngredients[i].UnitMetric" />
-                                </div>
-                                <div class="col-3">
-                                    <input class="form-control" placeholder="Name" @bind="newIngredients[i].Name" />
-                                </div>
-                                <div class="col-1">
-                                    @if (newIngredients.Count > 1)
-                                    {
-                                        <button class="btn btn-sm btn-danger" type="button" title="Remove" @onclick="() => RemoveIngredient(i)"><i class="fas fa-minus-circle"></i></button>
-                                    }
-                                </div>
-                            </div>
-                        }
-                        <button class="btn btn-sm btn-outline-warning mt-1" type="button" @onclick="AddIngredient" style="color:#f37335; border-color:#f37335;"><i class="fas fa-plus"></i> Add Ingredient</button>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold" style="color:#f37335">Steps *</label>
-                        @for (var i = 0; i < newSteps.Count; i++)
-                        {
-                            <div class="input-group mb-1">
-                                <span class="input-group-text">@($"{i + 1}.")</span>
-                                <input class="form-control" @bind="newSteps[i]" maxlength="200" />
-                                @if (newSteps.Count > 1)
-                                {
-                                    <button class="btn btn-outline-danger" type="button" title="Remove" @onclick="() => RemoveStep(i)"><i class="fas fa-minus-circle"></i></button>
-                                }
-                            </div>
-                        }
-                        <button class="btn btn-sm btn-outline-warning mt-1" type="button" @onclick="AddStep" style="color:#f37335; border-color:#f37335;"><i class="fas fa-plus"></i> Add Step</button>
-                    </div>
-                    <div class="mt-4 d-flex justify-content-end">
-                        <button class="btn btn-secondary me-2" type="button" @onclick="CancelAddRecipe">Cancel</button>
-                        <button class="btn btn-warning" type="button" @onclick="SaveRecipe" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none;">Save</button>
-                    </div>
+                    <button class="add-recipe-btn-outline btn btn-sm mt-1" type="button" @onclick="AddIngredient">
+                        <i class="fas fa-plus"></i> Add Ingredient
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <label class="add-recipe-label form-label">Steps *</label>
+                    @for (var i = 0; i < newSteps.Count; i++)
+                    {
+                        <div class="add-recipe-step-row">
+                            <span class="fw-bold text-secondary">@($"{i + 1}.")</span>
+                            <input class="form-control flex-fill" placeholder="Instruction step" @bind="newSteps[i]" maxlength="200" />
+                            @if (newSteps.Count > 1)
+                            {
+                                <button class="btn btn-sm btn-outline-danger" type="button" title="Remove" @onclick="() => RemoveStep(i)">
+                                    <i class="fas fa-minus-circle"></i>
+                                </button>
+                            }
+                        </div>
+                    }
+                    <button class="add-recipe-btn-outline btn btn-sm mt-1" type="button" @onclick="AddStep">
+                        <i class="fas fa-plus"></i> Add Step
+                    </button>
+                </div>
+                <div class="mt-4 d-flex justify-content-end">
+                    <button class="add-recipe-btn-outline btn me-2" type="button" @onclick="CancelAddRecipe">Cancel</button>
+                    <button class="add-recipe-btn-main btn" type="button" @onclick="SaveRecipe">Save</button>
                 </div>
             </div>
         }
@@ -441,42 +561,106 @@
                     </div>
                     <div class="mb-3 d-flex justify-content-between align-items-center">
                         <h5 class="fw-semibold mb-0" style="color:#f37335">Ingredients</h5>
-                        <button class="btn btn-sm btn-outline-warning" style="color: #f37335; border-color: #f37335;" @onclick="() => showMetric = !showMetric">
-                            @if (showMetric)
-                            {
-                                <span><i class="fas fa-balance-scale-left"></i> US Units</span>
-                            }
-                            else
-                            {
-                                <span><i class="fas fa-balance-scale-right"></i> Metric</span>
-                            }
-                        </button>
-                    </div>
-                    <ul>
-                        @foreach (var ingredient in SelectedRecipe.Ingredients)
-                        {
-                            <li>
+                        <div>
+                            <button class="btn btn-sm btn-outline-warning me-2" style="color: #f37335; border-color: #f37335;" @onclick="() => showMetric = !showMetric">
                                 @if (showMetric)
                                 {
-                                    @($"{FormatAmount(ingredient.AmountMetric)} {ingredient.UnitMetric} {ingredient.Name}")
+                                    <span><i class="fas fa-balance-scale-left"></i> US Units</span>
                                 }
                                 else
                                 {
-                                    @($"{FormatAmount(ingredient.AmountUS)} {ingredient.UnitUS} {ingredient.Name}")
+                                    <span><i class="fas fa-balance-scale-right"></i> Metric</span>
                                 }
-                            </li>
-                        }
-                    </ul>
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning" style="color: #f37335; border-color: #f37335;" @onclick="ToggleIngredientsView">
+                                @if (isIngredientsGrid)
+                                {
+                                    <span><i class="fas fa-list"></i> List</span>
+                                }
+                                else
+                                {
+                                    <span><i class="fas fa-th"></i> Grid</span>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                    @if (isIngredientsGrid)
+                    {
+                        <div class="row row-cols-2 g-2 mb-3">
+                            @foreach (var ingredient in SelectedRecipe.Ingredients)
+                            {
+                                <div class="col">
+                                    <div class="border rounded p-2 h-100" style="background: #fffbe7;">
+                                        <div class="fw-bold" style="color: #f37335;">
+                                            @if (showMetric)
+                                            {
+                                                @($"{FormatAmount(ingredient.AmountMetric)} {ingredient.UnitMetric}")
+                                            }
+                                            else
+                                            {
+                                                @($"{FormatAmount(ingredient.AmountUS)} {ingredient.UnitUS}")
+                                            }
+                                        </div>
+                                        <div>@ingredient.Name</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table table-bordered mb-3">
+                            <thead>
+                                <tr>
+                                    <th>Amount</th>
+                                    <th>Unit</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ingredient in SelectedRecipe.Ingredients)
+                                {
+                                    <tr>
+                                        @if (showMetric)
+                                        {
+                                            <td>@FormatAmount(ingredient.AmountMetric)</td>
+                                            <td>@ingredient.UnitMetric</td>
+                                        }
+                                        else
+                                        {
+                                            <td>@FormatAmount(ingredient.AmountUS)</td>
+                                            <td>@ingredient.UnitUS</td>
+                                        }
+                                        <td>@ingredient.Name</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+
                     <h5 class="fw-semibold mb-2 mt-4" style="color:#f37335">Instructions</h5>
-                    <ol class="mb-4" style="font-size:1.1rem;">
-                        @foreach (var step in SelectedRecipe.Steps)
-                        {
-                            <li class="mb-2">@step</li>
-                        }
-                    </ol>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">#</th>
+                                <th>Instruction</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < SelectedRecipe.Steps.Count; i++)
+                            {
+                                <tr>
+                                    <td>@(i + 1)</td>
+                                    <td>@SelectedRecipe.Steps[i]</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                     <button class="btn btn-warning" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none;" @onclick="CloseRecipe">
                         <i class="fas fa-arrow-left"></i> Back to Recipes
                     </button>
                 </div>
             </div>
         }
+    </div> <!-- closes .container -->
+</div>    <!-- closes .min-vh-100 -->
