@@ -5,6 +5,7 @@
 
 @code {
     private bool isGrid = true;
+    private bool isTable = false; // table view toggle
     private Recipe? SelectedRecipe = null;
     private bool showMetric = false;
     private bool isAdding = false;
@@ -39,7 +40,7 @@
     {
         new Recipe {
             Title = "Classic French Toast",
-            ImageUrl = "https://www.bing.com/images/search?view=detailV2&ccid=tt0arLB3&id=1822B455FF0DC66EA5380CC154E6FE5FC4B233BA&thid=OIP.tt0arLB3A0OMLuI2c-RaawHaLD&mediaurl=https%3a%2f%2fwww.al.com%2fresizer%2f9JsP53Q5FDvdNd8g590Ae6trtuY%3d%2f1280x0%2fsmart%2fadvancelocal-adapter-image-uploads.s3.amazonaws.com%2fimage.al.com%2fhome%2fbama-media%2fwidth2048%2fimg%2fsugar-and-spice%2fphoto%2ffrench-toast-4jpg-c8d4d23217be937a.jpg&exph=1910&expw=1280&q=classic+french+toast&simid=608040604235091205&FORM=IRPRST&ck=521BF7D2D9C8259F32935EA550C2BCCC&selectedIndex=0&itb=0",
+            ImageUrl = "https://th.bing.com/th/id/OIP.aaJQ8lYs_BlwDMrrqJWEBAHaEK?w=203&h=114&c=7&r=0&o=7&cb=iwp2&pid=1.7&rm=3",
             Description = "Golden, fluffy French toast with a hint of vanilla.",
             PrepTimeMinutes = 15,
             Ingredients = new List<Ingredient>
@@ -61,7 +62,7 @@
         },
         new Recipe {
             Title = "Caesar Salad",
-            ImageUrl = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+            ImageUrl = "https://th.bing.com/th/id/OSK.63308c0ef1c6816689f20e360e513e44?w=220&h=146&rs=2&qlt=80&o=6&cdv=1&pid=16.1",
             Description = "Crisp romaine lettuce with creamy Caesar dressing and crunchy croutons.",
             PrepTimeMinutes = 10,
             Ingredients = new List<Ingredient>
@@ -81,7 +82,7 @@
         },
         new Recipe {
             Title = "Chicken Curry",
-            ImageUrl = "https://images.unsplash.com/photo-1604908177521-3a4a5e9e1ae3?auto=format&fit=crop&w=400&q=80",
+            ImageUrl = "https://th.bing.com/th/id/OIP.lyaKc0kPBW0KHiLKzM-ANQHaHa?w=200&h=200&c=10&o=6&pid=genserp&rm=2",
             Description = "Aromatic and flavorful chicken curry with rich spices.",
             PrepTimeMinutes = 25,
             Ingredients = new List<Ingredient>
@@ -153,7 +154,7 @@
 
     private void RemoveIngredient(int index)
     {
-        if (newIngredients.Count > 1)
+        if (newIngredients.Count > 1 && index >= 0 && index < newIngredients.Count)
             newIngredients.RemoveAt(index);
     }
 
@@ -164,7 +165,7 @@
 
     private void RemoveStep(int index)
     {
-        if (newSteps.Count > 1)
+        if (newSteps.Count > 1 && index >= 0 && index < newSteps.Count)
             newSteps.RemoveAt(index);
     }
 
@@ -217,6 +218,82 @@
             });
         isAdding = false;
     }
+
+    // Function to switch to table view
+    private void ShowTableView() { isTable = true; isGrid = false; }
+    private void ShowGridView() { isGrid = true; isTable = false; }
+
+    // Function to render recipes as a table
+    private RenderFragment RenderRecipeTable() => builder =>
+    {
+        int seq = 0;
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "table-responsive");
+        builder.OpenElement(seq++, "table");
+        builder.AddAttribute(seq++, "class", "table table-striped table-bordered align-middle");
+        builder.OpenElement(seq++, "thead");
+        builder.OpenElement(seq++, "tr");
+        builder.OpenElement(seq++, "th"); builder.AddContent(seq++, "Image"); builder.CloseElement();
+        builder.OpenElement(seq++, "th"); builder.AddContent(seq++, "Title"); builder.CloseElement();
+        builder.OpenElement(seq++, "th"); builder.AddContent(seq++, "Description"); builder.CloseElement();
+        builder.OpenElement(seq++, "th"); builder.AddContent(seq++, "Prep Time"); builder.CloseElement();
+        builder.OpenElement(seq++, "th"); builder.AddContent(seq++, "Ingredients"); builder.CloseElement();
+        builder.OpenElement(seq++, "th"); builder.AddContent(seq++, "View"); builder.CloseElement();
+        builder.CloseElement(); // tr
+        builder.CloseElement(); // thead
+
+        builder.OpenElement(seq++, "tbody");
+        foreach (var recipe in Recipes)
+        {
+            builder.OpenElement(seq++, "tr");
+            // Image
+            builder.OpenElement(seq++, "td");
+            builder.OpenElement(seq++, "img");
+            builder.AddAttribute(seq++, "src", recipe.ImageUrl);
+            builder.AddAttribute(seq++, "alt", recipe.Title);
+            builder.AddAttribute(seq++, "style", "width:80px; height:60px; object-fit:cover; border-radius:0.5rem;");
+            builder.CloseElement(); // img
+            builder.CloseElement(); // td
+            // Title
+            builder.OpenElement(seq++, "td");
+            builder.AddContent(seq++, recipe.Title);
+            builder.CloseElement();
+            // Description
+            builder.OpenElement(seq++, "td");
+            builder.AddContent(seq++, recipe.Description);
+            builder.CloseElement();
+            // Prep Time
+            builder.OpenElement(seq++, "td");
+            builder.AddContent(seq++, recipe.PrepTimeMinutes + " min");
+            builder.CloseElement();
+            // Ingredients
+            builder.OpenElement(seq++, "td");
+            builder.OpenElement(seq++, "ul");
+            foreach (var ing in recipe.Ingredients)
+            {
+                builder.OpenElement(seq++, "li");
+                builder.AddContent(seq++, showMetric
+                    ? $"{FormatAmount(ing.AmountMetric)} {ing.UnitMetric} {ing.Name}"
+                    : $"{FormatAmount(ing.AmountUS)} {ing.UnitUS} {ing.Name}");
+                builder.CloseElement(); // li
+            }
+            builder.CloseElement(); // ul
+            builder.CloseElement(); // td
+            // View
+            builder.OpenElement(seq++, "td");
+            builder.OpenElement(seq++, "button");
+            builder.AddAttribute(seq++, "class", "btn btn-sm btn-warning");
+            builder.AddAttribute(seq++, "type", "button");
+            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => ShowRecipe(recipe)));
+            builder.AddContent(seq++, "View");
+            builder.CloseElement(); // button
+            builder.CloseElement(); // td
+            builder.CloseElement(); // tr
+        }
+        builder.CloseElement(); // tbody
+        builder.CloseElement(); // table
+        builder.CloseElement(); // div
+    };
 }
 
 <div class="min-vh-100" style="background: linear-gradient(135deg, #f5d365 0%, #ff9a9e 100%); padding: 40px 0;">
@@ -226,13 +303,13 @@
                 <i class="fas fa-utensils"></i> Recipes
             </h2>
             <div>
-                <button class="btn btn-outline-warning me-2 @((isGrid ? "active" : ""))"
-                        style="color: #f37335; border-color: #f37335;" @onclick="() => isGrid = true">
+                <button class="btn btn-outline-warning me-2 @((isGrid && !isTable ? "active" : ""))"
+                        style="color: #f37335; border-color: #f37335;" @onclick="ShowGridView">
                     <i class="fas fa-th"></i>
                 </button>
-                <button class="btn btn-outline-warning @((!isGrid ? "active" : ""))"
-                        style="color: #f37335; border-color: #f37335;" @onclick="() => isGrid = false">
-                    <i class="fas fa-list"></i>
+                <button class="btn btn-outline-warning me-2 @((isTable ? "active" : ""))"
+                        style="color: #f37335; border-color: #f37335;" @onclick="ShowTableView">
+                    <i class="fas fa-table"></i>
                 </button>
                 <button class="btn btn-warning ms-3" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none;"
                         @onclick="ShowAddRecipe">
@@ -320,7 +397,11 @@
         }
         else if (SelectedRecipe == null)
         {
-            @if (isGrid)
+            @if (isTable)
+            {
+                @RenderRecipeTable()
+            }
+            else
             {
                 <div class="row g-4">
                     @foreach (var recipe in Recipes)
@@ -340,31 +421,6 @@
                                         View Recipe
                                     </span>
                                 </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="list-group">
-                    @foreach (var recipe in Recipes)
-                    {
-                        <div class="list-group-item mb-3 border-0 shadow-sm" style="background: rgba(255,255,255,0.93); border-radius: 1.25rem; cursor:pointer;" @onclick="() => ShowRecipe(recipe)">
-                            <div class="d-flex align-items-center">
-                                <img src="@recipe.ImageUrl" style="width: 100px; height: 100px; border-radius: 1rem; object-fit: cover; margin-right: 1.5rem; border: 3px solid #f37335; cursor:pointer;" @onclick:stopPropagation="true" @onclick="() => ShowRecipe(recipe)">
-                                <div class="flex-grow-1" @onclick="() => ShowRecipe(recipe)">
-                                    <h5 class="mb-1 fw-bold" style="color: #f37335;">@recipe.Title</h5>
-                                    <div class="mb-1">
-                                        <span class="badge" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white;">
-                                            <i class="far fa-clock"></i> Prep: @recipe.PrepTimeMinutes min
-                                        </span>
-                                    </div>
-                                    <p class="mb-1 text-muted">@recipe.Description</p>
-                                </div>
-                                <span class="btn btn-warning ms-3" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none; pointer-events:none;">
-                                    View Recipe
-                                </span>
                             </div>
                         </div>
                     }
@@ -424,5 +480,3 @@
                 </div>
             </div>
         }
-    </div>
-</div>
