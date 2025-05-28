@@ -2,18 +2,51 @@
 <SectionContent SectionName="page-buttons">
     <div id="searchBox" class="input-group header-search" style="display:none;">
         <span class="input-group-text text-warning"><i class="fa fa-search"></i></span>
-        <input id="txtSearch" type="text" class="form-control" placeholder="Search" value="@Model.Search" @onchange="SearchTerm" />
+        <input id="txtSearch" type="text" class="form-control" placeholder="Search recipes, ingredients, and more..." value="@Model.Search" @onchange="SearchTerm" />
         <span class="input-group-text" onclick="hideSearchBox()"><i class="fa fa-times"></i></span>
     </div>
     <span id="controlBox">
         <button class="btn text-warning" onclick="showSearchBox()">
             <i class="fa fa-search"></i>
         </button>
-    </span>    
+    </span>
 </SectionContent>
-<section>
-    <h1>Welcome</h1>
+
+<section style="
+    min-height:70vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: url('https://th.bing.com/th/id/OIP.8oh30P8nzkOjK-_4MDGpqQHaEJ?w=287&h=180&c=7&r=0&o=7&cb=iwp2&pid=1.7&rm=3') center center/cover no-repeat;
+    background-color: #ffe6b3;
+">
+    <div class="container text-center" style="background: rgba(255,255,255,0.82); border-radius: 2rem; padding: 2.5rem 1.5rem;">
+        <h1 class="fw-bold mb-3" style="color:#f37335; font-size:2.7rem;">
+            Welcome to <span style="color:#ff5e62;">Your Tasty Kitchen!</span>
+        </h1>
+        <p class="lead mb-4" style="max-width:600px; margin:auto;">
+            Discover, cook, and share amazing recipes from around the world.<br />
+            <span style="color:#f7971e;">Search for dishes, convert ingredients, add your own recipes, and master new cooking skills—all in one beautiful app!</span>
+        </p>
+        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-4">
+            <a href="/recipes" class="btn btn-warning btn-lg px-5" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); border:none; color:white;">
+                <i class="fas fa-utensils"></i> Explore Recipes
+            </a>
+            <a href="/register" class="btn btn-outline-warning btn-lg px-5" style="color:#f37335; border-color:#f37335;">
+                <i class="fas fa-user-plus"></i> Join Free
+            </a>
+            <a href="/login" class="btn btn-outline-secondary btn-lg px-5">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+        <div class="mt-5">
+            <span class="badge" style="background:linear-gradient(90deg, #a1c4fd 0%, #3a7bd5 100%); color:white; font-size:1rem;">
+                <i class="fas fa-star"></i> 1000+ recipes • US/Metric conversion • Step-by-step guides
+            </span>
+        </div>
+    </div>
 </section>
+
 <script>
     function showSearchBox(){
         $('#searchBox').show();

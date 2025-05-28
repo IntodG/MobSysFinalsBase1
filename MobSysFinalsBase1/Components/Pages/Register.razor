@@ -1,64 +1,82 @@
 ﻿@page "/register"
-<form @onsubmit="RegisterUser">
-    <div class="card enhanced">
-        @if (!string.IsNullOrWhiteSpace(StatusMessage))
-        {
-            <div class="alert alert-@Status">
-                <i class="fa fa-info-circle"></i>&nbsp;
-                @StatusMessage
+<form @onsubmit="RegisterUser" class="d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+    <div class="card shadow-lg border-0" style="min-width: 420px; max-width: 540px; background: rgba(255,255,255,0.94); border-radius: 1.25rem;">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <div class="rounded-circle mx-auto" style="width:70px; height:70px; background:linear-gradient(135deg, #f7971e 0%, #ffd200 100%); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 24px #f7971e44;">
+                    <i class="fas fa-user-plus fa-3x text-white"></i>
+                </div>
+                <h3 class="card-title mt-3 fw-bold" style="color:#f7971e;">Create Account</h3>
+                <p class="text-secondary mb-0" style="font-size:1.05rem;">Fill out the form to register</p>
             </div>
-        }
-        <fieldset>
-            <legend>Username:</legend>
-            <input class="form-control" type="text" @bind="Model.Username" placeholder="Username" title="Username" />
-        </fieldset>
-        <fieldset>
-            <legend>Password:</legend>
-            <input type="password" @bind="Model.Password" placeholder="Password" title="Password" class="form-control" />
-        </fieldset>
-        <fieldset>
-            <legend>First Name:</legend>
-            <input class="form-control" type="text" @bind="Model.FirstName" placeholder="First Name" title="First Name" />
-        </fieldset>
-        <fieldset>
-            <legend>Last Name:</legend>
-            <input class="form-control" type="text" @bind="Model.LastName" placeholder="Last Name" title="Last Name" />
-        </fieldset>
-        <fieldset>
-            <legend>Mobile:</legend>
-            <input class="form-control" type="text" @bind="Model.MobileNumber" placeholder="Mobile" title="Mobile" />
-        </fieldset>
-        <fieldset>
-            <legend>Address:</legend>
-            <textarea class="form-control" @bind="Model.Address" placeholder="Address" title="Address"></textarea>
-        </fieldset>
-        <button type="submit" class="btn btn-warning scaledbutton">
-            <i class="fas fa-user-plus"></i>&nbsp;Register
-        </button>
+            @if (!string.IsNullOrWhiteSpace(StatusMessage))
+            {
+                <div class="alert alert-@Status alert-dismissible fade show mb-4" role="alert" style="background:linear-gradient(90deg,#ffecd2 0%,#fcb69f 100%); color:#6c2b1b;">
+                    <i class="fa fa-info-circle"></i>&nbsp;@StatusMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            <div class="mb-3">
+                <label for="username" class="form-label fw-semibold" style="color:#f7971e;">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text" style="background: #fffbe9; color: #f7971e;">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <input id="username" class="form-control border-0" style="background: #fffbe9;" type="text" @bind="Model.Username" placeholder="Enter your username" title="Username" autocomplete="username" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label fw-semibold" style="color:#f7971e;">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text" style="background: #fffbe9; color: #f7971e;">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input id="password" class="form-control border-0" style="background: #fffbe9;" type="password" @bind="Model.Password" placeholder="Enter your password" title="Password" autocomplete="new-password" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="firstname" class="form-label fw-semibold" style="color:#f7971e;">First Name</label>
+                <div class="input-group">
+                    <span class="input-group-text" style="background: #fffbe9; color: #f7971e;">
+                        <i class="fas fa-id-badge"></i>
+                    </span>
+                    <input id="firstname" class="form-control border-0" style="background: #fffbe9;" type="text" @bind="Model.FirstName" placeholder="Enter your first name" title="First Name" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="lastname" class="form-label fw-semibold" style="color:#f7971e;">Last Name</label>
+                <div class="input-group">
+                    <span class="input-group-text" style="background: #fffbe9; color: #f7971e;">
+                        <i class="fas fa-id-badge"></i>
+                    </span>
+                    <input id="lastname" class="form-control border-0" style="background: #fffbe9;" type="text" @bind="Model.LastName" placeholder="Enter your last name" title="Last Name" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="mobile" class="form-label fw-semibold" style="color:#f7971e;">Mobile</label>
+                <div class="input-group">
+                    <span class="input-group-text" style="background: #fffbe9; color: #f7971e;">
+                        <i class="fas fa-mobile-alt"></i>
+                    </span>
+                    <input id="mobile" class="form-control border-0" style="background: #fffbe9;" type="text" @bind="Model.MobileNumber" placeholder="Enter your mobile number" title="Mobile" />
+                </div>
+            </div>
+            <div class="mb-4">
+                <label for="address" class="form-label fw-semibold" style="color:#f7971e;">Address</label>
+                <div class="input-group">
+                    <span class="input-group-text align-top" style="background: #fffbe9; color: #f7971e;">
+                        <i class="fas fa-home"></i>
+                    </span>
+                    <textarea id="address" class="form-control border-0" style="background: #fffbe9; min-height: 70px;" @bind="Model.Address" placeholder="Enter your address" title="Address"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn w-100 py-2 fw-bold" style="background:linear-gradient(90deg, #ffd200 0%, #f7971e 100%); color:white; border:none; box-shadow:0 2px 8px #ffd20044;">
+                <i class="fas fa-user-plus"></i>&nbsp;Register
+            </button>
+            <div class="text-center mt-4">
+                <span class="text-muted" style="font-size:0.95rem;">Already have an account?</span>
+                <a href="/login" class="fw-semibold" style="color:#f7971e; text-decoration:underline;">Log in</a>
+            </div>
+        </div>
     </div>
 </form>
-
-<script>
-    $(function(){
-        $('.form-control').on('focus',function(){
-            $(this).attr('placeholder','');
-            $(this).parent().addClass('hasFocus');
-        });
-        $('.form-control').on('blur',function(){
-            $(this).attr('placeholder',$(this).attr('title'));
-            $(this).parent().removeClass('hasFocus');
-        });
-        $('.form-control').each(function(){
-            $(this).parent().removeClass('hasText');
-            if($(this).val().length > 0){
-                $(this).parent().addClass('hasText');
-            }
-            $(this).on('change',function(){
-                $(this).parent().removeClass('hasText');
-                if($(this).val().length > 0){
-                    $(this).parent().addClass('hasText');
-                }
-            });
-        });
-    });
-</script>

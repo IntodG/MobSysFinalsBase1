@@ -1,48 +1,46 @@
 ﻿@page "/login"
-<form @onsubmit="LoginUser">
-    <div class="card enhanced">
-        @if (!string.IsNullOrWhiteSpace(StatusMessage))
-        {
-            <div class="alert alert-@Status">
-                <i class="fa fa-info-circle"></i>&nbsp;
-                @StatusMessage
+<form @onsubmit="LoginUser" class="d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(135deg, #f5d365 0%, #ff9a9e 100%);">
+    <div class="card shadow-lg border-0" style="min-width: 380px; max-width: 430px; background: rgba(255, 255, 255, 0.93); border-radius: 1.25rem;">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <div class="rounded-circle mx-auto" style="width: 70px; height: 70px; background: linear-gradient(135deg, #fdc830 0%, #f37335 100%); display: flex; align-items: center; justify-content: center; box-shadow:0 4px 24px #f3733566;">
+                    <i class="fas fa-user-circle fa-3x text-white"></i>
+                </div>
+                <h3 class="card-title mt-3 fw-bold" style="color: #f37335;">WELCOME!</h3>
+                <p class="text-secondary mb-0" style="font-size: 1.05rem;">Sign in to your account</p>
             </div>
-        }
-        <fieldset>
-            <legend>Username:</legend>
-            <input class="form-control" type="text" @bind="Model.Username" placeholder="Username" title="Username" />
-        </fieldset>
-        <fieldset>
-            <legend>Password:</legend>
-            <input type="password" @bind="Model.Password" placeholder="Password" title="Password" class="form-control ">
-        </fieldset>
-        <button type="submit" class="btn btn-warning scaledbutton">
-            <i class="fas fa-sign-in-alt"></i>&nbsp;Log In
-        </button>
+            @if (!string.IsNullOrWhiteSpace(StatusMessage))
+            {
+                <div class="alert alert-@Status alert-dismissible fade show mb-4" role="alert" style="background:linear-gradient(90deg,#ffe29f 0,#ffa99f 100%); color:#6c2b1b;">
+                    <i class="fa fa-info-circle"></i>&nbsp;@StatusMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            <div class="mb-3">
+                <label for="username" class="form-label fw-semibold" style="color:#f37335;">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text" style="background: #fff5e1; color: #f37335;">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <input id="username" class="form-control border-0" style="background: #fff5e1;" type="text" @bind="Model.Username" placeholder="Enter your username" title="Username" autocomplete="username" />
+                </div>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="form-label fw-semibold" style="color:#f37335;">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text" style="background: #fff5e1; color: #f37335;">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input id="password" class="form-control border-0" style="background: #fff5e1;" type="password" @bind="Model.Password" placeholder="Enter your password" title="Password" autocomplete="current-password" />
+                </div>
+            </div>
+            <button type="submit" class="btn w-100 py-2 fw-bold" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none; box-shadow:0 2px 8px #ff996633;">
+                <i class="fas fa-sign-in-alt"></i>&nbsp;Log In
+            </button>
+            <div class="text-center mt-4">
+                <span class="text-muted" style="font-size:0.95rem;">Don't have an account?</span>
+                <a href="/register" class="fw-semibold" style="color:#f37335; text-decoration:underline;">Register</a>
+            </div>
+        </div>
     </div>
 </form>
-
-<script>
-    $(function(){
-        $('.form-control').on('focus',function(){
-            $(this).attr('placeholder','');
-            $(this).parent().addClass('hasFocus');
-        });
-        $('.form-control').on('blur',function(){
-            $(this).attr('placeholder',$(this).attr('title'));
-            $(this).parent().removeClass('hasFocus');
-        });
-        $('.form-control').each(function(){
-            $(this).parent().removeClass('hasText');
-            if($(this).val().length > 0){
-                $(this).parent().addClass('hasText');
-            }
-            $(this).on('change',function(){
-                $(this).parent().removeClass('hasText');
-                if($(this).val().length > 0){
-                    $(this).parent().addClass('hasText');
-                }
-            });
-        });
-    });
-</script>

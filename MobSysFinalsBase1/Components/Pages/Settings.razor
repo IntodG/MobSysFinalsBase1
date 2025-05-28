@@ -1,0 +1,104 @@
+﻿@page "/settings"
+@inject IJSRuntime JS
+
+@code {
+    private string SelectedTheme = "orange";
+    private readonly Dictionary<string, (string Name, string Gradient, string Accent)> Themes = new()
+    {
+        { "orange", ("Sunrise Orange", "linear-gradient(135deg, #f5d365 0%, #ff9a9e 100%)", "#f37335") },
+        { "peach", ("Peach Yellow", "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)", "#f7971e") },
+        { "blue", ("Calm Blue", "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)", "#3a7bd5") }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var storedTheme = await JS.InvokeAsync<string>("localStorage.getItem", "theme");
+        if (!string.IsNullOrEmpty(storedTheme) && Themes.ContainsKey(storedTheme))
+        {
+            SelectedTheme = storedTheme;
+        }
+        await ApplyTheme();
+    }
+
+    private async Task ThemeChanged(ChangeEventArgs e)
+    {
+        SelectedTheme = e.Value?.ToString() ?? "orange";
+        await JS.InvokeVoidAsync("localStorage.setItem", "theme", SelectedTheme);
+        await ApplyTheme();
+    }
+
+    private async Task ApplyTheme()
+    {
+        var theme = Themes[SelectedTheme];
+        await JS.InvokeVoidAsync("setTheme", theme.Gradient, theme.Accent);
+    }
+}
+
+<!--
+Add this script in your wwwroot/index.html (or _Host.cshtml for Blazor Server) before </body>:
+<script>
+  window.setTheme = (gradient, accent) => {
+    document.body.style.background = gradient;
+    document.documentElement.style.setProperty('--accent-color', accent);
+  };
+  // On load, apply theme from localStorage if set
+  document.addEventListener('DOMContentLoaded', function() {
+    var theme = localStorage.getItem('theme');
+    if (theme) {
+      var themes = {
+        orange: ["linear-gradient(135deg, #f5d365 0%, #ff9a9e 100%)", "#f37335"],
+        peach: ["linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)", "#f7971e"],
+        blue: ["linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)", "#3a7bd5"]
+      };
+      if(themes[theme]){
+        window.setTheme(themes[theme][0], themes[theme][1]);
+      }
+    }
+  });
+</script>
+-->
+
+<div class="min-vh-100 d-flex justify-content-center align-items-center" style="padding: 40px 0;">
+    <div class="card shadow-lg border-0" style="width: 420px; background: rgba(255,255,255,0.94); border-radius: 1.25rem;">
+        <div class="card-body p-5">
+            <h2 class="fw-bold mb-4" style="color: var(--accent-color, #f37335);"><i class="fas fa-cog"></i> Settings</h2>
+            <div class="mb-3">
+                <label for="themeSelect" class="form-label fw-semibold" style="color: var(--accent-color, #f37335);">Color Theme</label>
+                <select id="themeSelect" class="form-select" @onchange="ThemeChanged" value="@SelectedTheme">
+                    @foreach (var theme in Themes)
+                    {
+                        <option value="@theme.Key">@theme.Value.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="row mt-4">
+                @foreach (var theme in Themes)
+                {
+                    <div class="col-6 mb-2">
+                        <div class="card border-0 shadow-sm" style="border-radius: 1rem; cursor:pointer;" @onclick="async ()=> { SelectedTheme = theme.Key; await ThemeChanged(new ChangeEventArgs{ Value = theme.Key }); }">
+                            <div style="height: 48px; border-radius: 1rem 1rem 0 0; background:@theme.Value.Gradient"></div>
+                            <div class="card-body py-2 px-3 text-center" style="color:@theme.Value.Accent">
+                                @theme.Value.Name
+                                @if (SelectedTheme == theme.Key)
+                                {
+                                    <i class="fas fa-check-circle ms-2"></i>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-accent {
+        background: var(--accent-color, #f37335) !important;
+        color: #fff !important;
+        border: none;
+    }
+    .btn-accent:hover {
+        filter: brightness(1.1);
+    }
+</style>

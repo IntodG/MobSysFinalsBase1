@@ -1,0 +1,428 @@
+﻿@page "/recipes"
+@inject IJSRuntime JS
+
+@using System.Globalization
+
+@code {
+    private bool isGrid = true;
+    private Recipe? SelectedRecipe = null;
+    private bool showMetric = false;
+    private bool isAdding = false;
+    private string newTitle = "";
+    private string newImageUrl = "";
+    private string newDescription = "";
+    private string newPrepTime = "";
+    private List<Ingredient> newIngredients = new() { new Ingredient() };
+    private List<string> newSteps = new() { "" };
+    private string addError = "";
+
+    class Ingredient
+    {
+        public string Name { get; set; } = "";
+        public double AmountUS { get; set; }
+        public string UnitUS { get; set; } = "";
+        public double AmountMetric { get; set; }
+        public string UnitMetric { get; set; } = "";
+    }
+
+    class Recipe
+    {
+        public string Title { get; set; } = "";
+        public string ImageUrl { get; set; } = "";
+        public string Description { get; set; } = "";
+        public int PrepTimeMinutes { get; set; }
+        public List<Ingredient> Ingredients { get; set; } = new();
+        public List<string> Steps { get; set; } = new();
+    }
+
+    private List<Recipe> Recipes = new()
+    {
+        new Recipe {
+            Title = "Classic French Toast",
+            ImageUrl = "https://www.bing.com/images/search?view=detailV2&ccid=tt0arLB3&id=1822B455FF0DC66EA5380CC154E6FE5FC4B233BA&thid=OIP.tt0arLB3A0OMLuI2c-RaawHaLD&mediaurl=https%3a%2f%2fwww.al.com%2fresizer%2f9JsP53Q5FDvdNd8g590Ae6trtuY%3d%2f1280x0%2fsmart%2fadvancelocal-adapter-image-uploads.s3.amazonaws.com%2fimage.al.com%2fhome%2fbama-media%2fwidth2048%2fimg%2fsugar-and-spice%2fphoto%2ffrench-toast-4jpg-c8d4d23217be937a.jpg&exph=1910&expw=1280&q=classic+french+toast&simid=608040604235091205&FORM=IRPRST&ck=521BF7D2D9C8259F32935EA550C2BCCC&selectedIndex=0&itb=0",
+            Description = "Golden, fluffy French toast with a hint of vanilla.",
+            PrepTimeMinutes = 15,
+            Ingredients = new List<Ingredient>
+            {
+                new Ingredient { Name = "Eggs", AmountUS = 2, UnitUS = "large", AmountMetric = 2, UnitMetric = "large" },
+                new Ingredient { Name = "Milk", AmountUS = 0.5, UnitUS = "cup", AmountMetric = 120, UnitMetric = "ml" },
+                new Ingredient { Name = "Bread Slices", AmountUS = 4, UnitUS = "slices", AmountMetric = 4, UnitMetric = "slices" },
+                new Ingredient { Name = "Butter", AmountUS = 1, UnitUS = "tbsp", AmountMetric = 15, UnitMetric = "g" },
+                new Ingredient { Name = "Vanilla Extract", AmountUS = 1, UnitUS = "tsp", AmountMetric = 5, UnitMetric = "ml" }
+            },
+            Steps = new List<string>
+            {
+                "Whisk eggs, milk, and vanilla together in a bowl.",
+                "Heat butter in a skillet over medium heat.",
+                "Dip bread slices in egg mixture, coating both sides.",
+                "Cook bread in skillet until golden brown on both sides.",
+                "Serve warm with syrup or fruit."
+            }
+        },
+        new Recipe {
+            Title = "Caesar Salad",
+            ImageUrl = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+            Description = "Crisp romaine lettuce with creamy Caesar dressing and crunchy croutons.",
+            PrepTimeMinutes = 10,
+            Ingredients = new List<Ingredient>
+            {
+                new Ingredient { Name = "Romaine Lettuce", AmountUS = 6, UnitUS = "cups", AmountMetric = 150, UnitMetric = "g" },
+                new Ingredient { Name = "Croutons", AmountUS = 1, UnitUS = "cup", AmountMetric = 40, UnitMetric = "g" },
+                new Ingredient { Name = "Caesar Dressing", AmountUS = 0.25, UnitUS = "cup", AmountMetric = 60, UnitMetric = "ml" },
+                new Ingredient { Name = "Parmesan Cheese", AmountUS = 0.25, UnitUS = "cup", AmountMetric = 20, UnitMetric = "g" }
+            },
+            Steps = new List<string>
+            {
+                "Wash and dry the romaine lettuce, then chop.",
+                "In a large bowl, toss lettuce with dressing.",
+                "Add croutons and parmesan cheese, toss again.",
+                "Serve immediately."
+            }
+        },
+        new Recipe {
+            Title = "Chicken Curry",
+            ImageUrl = "https://images.unsplash.com/photo-1604908177521-3a4a5e9e1ae3?auto=format&fit=crop&w=400&q=80",
+            Description = "Aromatic and flavorful chicken curry with rich spices.",
+            PrepTimeMinutes = 25,
+            Ingredients = new List<Ingredient>
+            {
+                new Ingredient { Name = "Chicken Breast", AmountUS = 1, UnitUS = "lb", AmountMetric = 450, UnitMetric = "g" },
+                new Ingredient { Name = "Onion", AmountUS = 1, UnitUS = "medium", AmountMetric = 1, UnitMetric = "medium" },
+                new Ingredient { Name = "Garlic", AmountUS = 2, UnitUS = "cloves", AmountMetric = 2, UnitMetric = "cloves" },
+                new Ingredient { Name = "Curry Powder", AmountUS = 2, UnitUS = "tbsp", AmountMetric = 16, UnitMetric = "g" },
+                new Ingredient { Name = "Coconut Milk", AmountUS = 1, UnitUS = "cup", AmountMetric = 240, UnitMetric = "ml" }
+            },
+            Steps = new List<string>
+            {
+                "Cut chicken into bite-sized pieces.",
+                "Sauté onion and garlic until translucent.",
+                "Add chicken and cook until browned.",
+                "Stir in curry powder, then pour in coconut milk.",
+                "Simmer until chicken is cooked and sauce thickens."
+            }
+        }
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try { await JS.InvokeVoidAsync("themeManager.applyStoredTheme"); }
+            catch { }
+        }
+    }
+
+    private void ShowRecipe(Recipe recipe)
+    {
+        SelectedRecipe = recipe;
+        showMetric = false;
+    }
+
+    private void CloseRecipe()
+    {
+        SelectedRecipe = null;
+    }
+
+    private string FormatAmount(double amount)
+    {
+        // For whole numbers, don't show .0
+        if (amount % 1 == 0)
+        {
+            return ((int)amount).ToString(CultureInfo.InvariantCulture);
+        }
+        return amount.ToString(CultureInfo.InvariantCulture);
+    }
+
+    // Add Recipe Functions
+    private void ShowAddRecipe()
+    {
+        isAdding = true;
+        addError = "";
+        newTitle = "";
+        newImageUrl = "";
+        newDescription = "";
+        newPrepTime = "";
+        newIngredients = new() { new Ingredient() };
+        newSteps = new() { "" };
+    }
+
+    private void AddIngredient()
+    {
+        newIngredients.Add(new Ingredient());
+    }
+
+    private void RemoveIngredient(int index)
+    {
+        if (newIngredients.Count > 1)
+            newIngredients.RemoveAt(index);
+    }
+
+    private void AddStep()
+    {
+        newSteps.Add("");
+    }
+
+    private void RemoveStep(int index)
+    {
+        if (newSteps.Count > 1)
+            newSteps.RemoveAt(index);
+    }
+
+    private void CancelAddRecipe()
+    {
+        isAdding = false;
+    }
+
+    private void SaveRecipe()
+    {
+        addError = "";
+        if (string.IsNullOrWhiteSpace(newTitle) || string.IsNullOrWhiteSpace(newDescription) || string.IsNullOrWhiteSpace(newPrepTime))
+        {
+            addError = "Please fill in all required fields.";
+            return;
+        }
+        if (!int.TryParse(newPrepTime, out int prepTime) || prepTime < 0)
+        {
+            addError = "Prep time must be a valid positive number.";
+            return;
+        }
+        if (newIngredients.Any(i => string.IsNullOrWhiteSpace(i.Name) || string.IsNullOrWhiteSpace(i.UnitUS) || string.IsNullOrWhiteSpace(i.UnitMetric)))
+        {
+            addError = "Please fill in all ingredient fields.";
+            return;
+        }
+        if (newSteps.Any(s => string.IsNullOrWhiteSpace(s)))
+        {
+            addError = "Please fill in all steps.";
+            return;
+        }
+
+        Recipes.Add(new Recipe
+            {
+                Title = newTitle,
+                ImageUrl = string.IsNullOrWhiteSpace(newImageUrl)
+                    ? "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80"
+                    : newImageUrl,
+                Description = newDescription,
+                PrepTimeMinutes = prepTime,
+                Ingredients = newIngredients.Select(i => new Ingredient
+                {
+                    Name = i.Name,
+                    AmountUS = i.AmountUS,
+                    UnitUS = i.UnitUS,
+                    AmountMetric = i.AmountMetric,
+                    UnitMetric = i.UnitMetric
+                }).ToList(),
+                Steps = newSteps.ToList()
+            });
+        isAdding = false;
+    }
+}
+
+<div class="min-vh-100" style="background: linear-gradient(135deg, #f5d365 0%, #ff9a9e 100%); padding: 40px 0;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold" style="color: #f37335;">
+                <i class="fas fa-utensils"></i> Recipes
+            </h2>
+            <div>
+                <button class="btn btn-outline-warning me-2 @((isGrid ? "active" : ""))"
+                        style="color: #f37335; border-color: #f37335;" @onclick="() => isGrid = true">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="btn btn-outline-warning @((!isGrid ? "active" : ""))"
+                        style="color: #f37335; border-color: #f37335;" @onclick="() => isGrid = false">
+                    <i class="fas fa-list"></i>
+                </button>
+                <button class="btn btn-warning ms-3" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none;"
+                        @onclick="ShowAddRecipe">
+                    <i class="fas fa-plus"></i> Add Recipe
+                </button>
+            </div>
+        </div>
+
+        @if (isAdding)
+        {
+            <div class="card shadow-lg border-0 mb-4" style="max-width: 700px; margin: 0 auto; background: rgba(255,255,255,0.97); border-radius: 1.5rem;">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-3" style="color:#f37335"><i class="fas fa-plus-circle"></i> Add New Recipe</h4>
+                    @if (!string.IsNullOrEmpty(addError))
+                    {
+                        <div class="alert alert-danger">@addError</div>
+                    }
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold" style="color:#f37335">Title *</label>
+                        <input class="form-control" @bind="newTitle" maxlength="50" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold" style="color:#f37335">Image URL</label>
+                        <input class="form-control" @bind="newImageUrl" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold" style="color:#f37335">Description *</label>
+                        <textarea class="form-control" @bind="newDescription" maxlength="200"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold" style="color:#f37335">Prep Time (minutes) *</label>
+                        <input class="form-control" @bind="newPrepTime" type="number" min="0" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold" style="color:#f37335">Ingredients *</label>
+                        @for (var i = 0; i < newIngredients.Count; i++)
+                        {
+                            <div class="row g-1 mb-2 align-items-end">
+                                <div class="col-2">
+                                    <input class="form-control" type="number" placeholder="US Amt" @bind="newIngredients[i].AmountUS" />
+                                </div>
+                                <div class="col-2">
+                                    <input class="form-control" placeholder="US Unit" @bind="newIngredients[i].UnitUS" />
+                                </div>
+                                <div class="col-2">
+                                    <input class="form-control" type="number" placeholder="Metric Amt" @bind="newIngredients[i].AmountMetric" />
+                                </div>
+                                <div class="col-2">
+                                    <input class="form-control" placeholder="Metric Unit" @bind="newIngredients[i].UnitMetric" />
+                                </div>
+                                <div class="col-3">
+                                    <input class="form-control" placeholder="Name" @bind="newIngredients[i].Name" />
+                                </div>
+                                <div class="col-1">
+                                    @if (newIngredients.Count > 1)
+                                    {
+                                        <button class="btn btn-sm btn-danger" type="button" title="Remove" @onclick="() => RemoveIngredient(i)"><i class="fas fa-minus-circle"></i></button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        <button class="btn btn-sm btn-outline-warning mt-1" type="button" @onclick="AddIngredient" style="color:#f37335; border-color:#f37335;"><i class="fas fa-plus"></i> Add Ingredient</button>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold" style="color:#f37335">Steps *</label>
+                        @for (var i = 0; i < newSteps.Count; i++)
+                        {
+                            <div class="input-group mb-1">
+                                <span class="input-group-text">@($"{i + 1}.")</span>
+                                <input class="form-control" @bind="newSteps[i]" maxlength="200" />
+                                @if (newSteps.Count > 1)
+                                {
+                                    <button class="btn btn-outline-danger" type="button" title="Remove" @onclick="() => RemoveStep(i)"><i class="fas fa-minus-circle"></i></button>
+                                }
+                            </div>
+                        }
+                        <button class="btn btn-sm btn-outline-warning mt-1" type="button" @onclick="AddStep" style="color:#f37335; border-color:#f37335;"><i class="fas fa-plus"></i> Add Step</button>
+                    </div>
+                    <div class="mt-4 d-flex justify-content-end">
+                        <button class="btn btn-secondary me-2" type="button" @onclick="CancelAddRecipe">Cancel</button>
+                        <button class="btn btn-warning" type="button" @onclick="SaveRecipe" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none;">Save</button>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (SelectedRecipe == null)
+        {
+            @if (isGrid)
+            {
+                <div class="row g-4">
+                    @foreach (var recipe in Recipes)
+                    {
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                            <div class="card shadow-sm border-0 h-100" style="background: rgba(255,255,255,0.93); border-radius: 1.25rem;">
+                                <img src="@recipe.ImageUrl" class="card-img-top" style="border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem; height:170px; object-fit:cover; cursor:pointer;" @onclick="() => ShowRecipe(recipe)">
+                                <div class="card-body d-flex flex-column" style="cursor:pointer;" @onclick="() => ShowRecipe(recipe)">
+                                    <h5 class="card-title fw-bold" style="color: #f37335;">@recipe.Title</h5>
+                                    <div class="mb-2">
+                                        <span class="badge" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white;">
+                                            <i class="far fa-clock"></i> Prep: @recipe.PrepTimeMinutes min
+                                        </span>
+                                    </div>
+                                    <p class="card-text text-muted flex-grow-1">@recipe.Description</p>
+                                    <span class="btn btn-warning mt-3" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none; pointer-events:none;">
+                                        View Recipe
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+                    @foreach (var recipe in Recipes)
+                    {
+                        <div class="list-group-item mb-3 border-0 shadow-sm" style="background: rgba(255,255,255,0.93); border-radius: 1.25rem; cursor:pointer;" @onclick="() => ShowRecipe(recipe)">
+                            <div class="d-flex align-items-center">
+                                <img src="@recipe.ImageUrl" style="width: 100px; height: 100px; border-radius: 1rem; object-fit: cover; margin-right: 1.5rem; border: 3px solid #f37335; cursor:pointer;" @onclick:stopPropagation="true" @onclick="() => ShowRecipe(recipe)">
+                                <div class="flex-grow-1" @onclick="() => ShowRecipe(recipe)">
+                                    <h5 class="mb-1 fw-bold" style="color: #f37335;">@recipe.Title</h5>
+                                    <div class="mb-1">
+                                        <span class="badge" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white;">
+                                            <i class="far fa-clock"></i> Prep: @recipe.PrepTimeMinutes min
+                                        </span>
+                                    </div>
+                                    <p class="mb-1 text-muted">@recipe.Description</p>
+                                </div>
+                                <span class="btn btn-warning ms-3" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none; pointer-events:none;">
+                                    View Recipe
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="card shadow-lg border-0" style="max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.97); border-radius: 1.5rem;">
+                <img src="@SelectedRecipe.ImageUrl" class="card-img-top" style="border-top-left-radius: 1.5rem; border-top-right-radius: 1.5rem; height:220px; object-fit:cover;">
+                <div class="card-body">
+                    <h3 class="fw-bold mb-2" style="color:#f37335">@SelectedRecipe.Title</h3>
+                    <p class="mb-2 text-muted">@SelectedRecipe.Description</p>
+                    <div class="mb-3">
+                        <span class="badge" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white;">
+                            <i class="far fa-clock"></i> Prep Time: @SelectedRecipe.PrepTimeMinutes min
+                        </span>
+                    </div>
+                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-semibold mb-0" style="color:#f37335">Ingredients</h5>
+                        <button class="btn btn-sm btn-outline-warning" style="color: #f37335; border-color: #f37335;" @onclick="() => showMetric = !showMetric">
+                            @if (showMetric)
+                            {
+                                <span><i class="fas fa-balance-scale-left"></i> US Units</span>
+                            }
+                            else
+                            {
+                                <span><i class="fas fa-balance-scale-right"></i> Metric</span>
+                            }
+                        </button>
+                    </div>
+                    <ul>
+                        @foreach (var ingredient in SelectedRecipe.Ingredients)
+                        {
+                            <li>
+                                @if (showMetric)
+                                {
+                                    @($"{FormatAmount(ingredient.AmountMetric)} {ingredient.UnitMetric} {ingredient.Name}")
+                                }
+                                else
+                                {
+                                    @($"{FormatAmount(ingredient.AmountUS)} {ingredient.UnitUS} {ingredient.Name}")
+                                }
+                            </li>
+                        }
+                    </ul>
+                    <h5 class="fw-semibold mb-2 mt-4" style="color:#f37335">Instructions</h5>
+                    <ol class="mb-4" style="font-size:1.1rem;">
+                        @foreach (var step in SelectedRecipe.Steps)
+                        {
+                            <li class="mb-2">@step</li>
+                        }
+                    </ol>
+                    <button class="btn btn-warning" style="background:linear-gradient(90deg, #ff9966 0%, #ff5e62 100%); color:white; border:none;" @onclick="CloseRecipe">
+                        <i class="fas fa-arrow-left"></i> Back to Recipes
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
